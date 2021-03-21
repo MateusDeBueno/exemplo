@@ -14,6 +14,7 @@ ASM_SRCS += \
 ../F2837xD_usDelay.asm 
 
 C_SRCS += \
+../F2837xD_CpuTimers.c \
 ../F2837xD_DefaultISR.c \
 ../F2837xD_GlobalVariableDefs.c \
 ../F2837xD_Gpio.c \
@@ -24,6 +25,7 @@ C_SRCS += \
 ../peripheral_setup.c 
 
 C_DEPS += \
+./F2837xD_CpuTimers.d \
 ./F2837xD_DefaultISR.d \
 ./F2837xD_GlobalVariableDefs.d \
 ./F2837xD_Gpio.d \
@@ -35,6 +37,7 @@ C_DEPS += \
 
 OBJS += \
 ./F2837xD_CodeStartBranch.obj \
+./F2837xD_CpuTimers.obj \
 ./F2837xD_DefaultISR.obj \
 ./F2837xD_GlobalVariableDefs.obj \
 ./F2837xD_Gpio.obj \
@@ -51,6 +54,7 @@ ASM_DEPS += \
 
 OBJS__QUOTED += \
 "F2837xD_CodeStartBranch.obj" \
+"F2837xD_CpuTimers.obj" \
 "F2837xD_DefaultISR.obj" \
 "F2837xD_GlobalVariableDefs.obj" \
 "F2837xD_Gpio.obj" \
@@ -62,6 +66,7 @@ OBJS__QUOTED += \
 "peripheral_setup.obj" 
 
 C_DEPS__QUOTED += \
+"F2837xD_CpuTimers.d" \
 "F2837xD_DefaultISR.d" \
 "F2837xD_GlobalVariableDefs.d" \
 "F2837xD_Gpio.d" \
@@ -80,6 +85,7 @@ ASM_SRCS__QUOTED += \
 "../F2837xD_usDelay.asm" 
 
 C_SRCS__QUOTED += \
+"../F2837xD_CpuTimers.c" \
 "../F2837xD_DefaultISR.c" \
 "../F2837xD_GlobalVariableDefs.c" \
 "../F2837xD_Gpio.c" \
