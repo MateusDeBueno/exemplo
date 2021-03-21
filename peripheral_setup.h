@@ -11,6 +11,7 @@
 #include "F28x_Project.h"
 
 void Setup_GPIO(void);
+void Setup_ePWM(void);
 
 
 

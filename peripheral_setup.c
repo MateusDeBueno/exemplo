@@ -32,26 +32,55 @@ void Setup_GPIO(void){
     GpioCtrlRegs.GPBPUD.bit.GPIO34 = 1;
 
 
+    //PWM
+    GpioCtrlRegs.GPAGMUX1.bit.GPIO0 = 0;
+    GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 1;
+    GpioCtrlRegs.GPAPUD.bit.GPIO0 = 1;
 
-    /*
-    GpioCtrlRegs.GPAPUD.bit.GPIO2 = 1;          //Disable pull-up on GPIO2 (EPWM2a)
-    GpioCtrlRegs.GPAPUD.bit.GPIO3 = 1;          //Disable pull-up on GPIO3 (EPWM2b)
-    GpioCtrlRegs.GPAMUX1.bit.GPIO2 = 1;         //Configure GPIO2 as EPWM2a
-    GpioCtrlRegs.GPAMUX1.bit.GPIO3 = 1;         //Configure GPIO3 as EPWM2b
+    GpioCtrlRegs.GPAGMUX1.bit.GPIO1 = 0;
+    GpioCtrlRegs.GPAMUX1.bit.GPIO1 = 1;
+    GpioCtrlRegs.GPAPUD.bit.GPIO1 = 1;
 
-
-    //Configure GPIO as output pin
-    GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 0;
-    GpioCtrlRegs.GPADIR.bit.GPIO0 = 1;          //Configure as output pin
-    GpioCtrlRegs.GPAMUX1.bit.GPIO1 = 0;
-    GpioCtrlRegs.GPADIR.bit.GPIO1 = 1;          //Configure as output pin
-    GpioCtrlRegs.GPACSEL1.bit.GPIO1 = GPIO_MUX_CPU2;   //GPIO1 is controlled by CPU2
-
-
-    GpioCtrlRegs.GPAMUX2.bit.GPIO31 = 0;        //Led blue
-    GpioCtrlRegs.GPADIR.bit.GPIO31 = 1;         //Configure as output pin
-    GpioCtrlRegs.GPBMUX1.bit.GPIO34 = 0;        //Led red
-    GpioCtrlRegs.GPBDIR.bit.GPIO34 = 1;         //Configure as output pin
-    */
     EDIS;
 }
+
+
+
+void Setup_ePWM(void){
+    EALLOW;
+    CpuSysRegs.PCLKCR0.bit.TBCLKSYNC = 0;       //desativo o pwm para poder configurar
+
+    //configura portadora
+    EPwm1Regs.TBPRD = 2000;            //25khz //PRD=MCclock/(2*fs), porem se updown PRD = MCclock/(4*fs)
+    EPwm1Regs.TBPHS.bit.TBPHS = 0;     //defasagem 0
+    EPwm1Regs.TBCTL.bit.SYNCOSEL = TB_SYNC_DISABLE;
+    EPwm1Regs.TBCTR = 0x0000;
+    EPwm1Regs.TBCTL.bit.CTRMODE = TB_COUNT_UPDOWN; //count up/down
+    EPwm1Regs.TBCTL.bit.HSPCLKDIV = TB_DIV1;       //pre scale do clock do pwm, util para baixar frequencias, para o TBPRD não estourar seu valor maximo
+    EPwm1Regs.TBCTL.bit.CLKDIV = TB_DIV1;
+
+    //configura shadow (comparadores so atualizam apos um evento)
+    EPwm1Regs.CMPCTL.bit.SHDWAMODE = CC_SHADOW;
+    EPwm1Regs.CMPCTL.bit.LOADAMODE = CC_CTR_ZERO_PRD;  //escolhe o evento para PWM1A
+    EPwm1Regs.CMPCTL.bit.SHDWBMODE = CC_SHADOW;
+    EPwm1Regs.CMPCTL.bit.LOADBMODE = CC_CTR_ZERO_PRD;  //escolhe o evento para PWM1B
+
+    //configura as ações para PWM1A
+    EPwm1Regs.AQCTLA.bit.PRD = AQ_NO_ACTION;
+    EPwm1Regs.AQCTLA.bit.ZRO = AQ_NO_ACTION;
+    EPwm1Regs.AQCTLA.bit.CAU = AQ_CLEAR;
+    EPwm1Regs.AQCTLA.bit.CAD = AQ_SET;
+
+    EPwm1Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC; //EPWM B é complementar do EPWM A
+    EPwm1Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE;  //habilita dead band
+    EPwm1Regs.DBFED.bit.DBFED = 100;                //rising edges - 100 equivale a 1 micro s
+    EPwm1Regs.DBRED.bit.DBRED = 100;                //falling edges
+
+    CpuSysRegs.PCLKCR0.bit.TBCLKSYNC = 1;       //ativa o pwm
+    EDIS;
+}
+
+
+
+
+

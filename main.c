@@ -17,6 +17,7 @@ int main(void)
     InitPieVectTable();             //Initialize the PIE vector table
 
     Setup_GPIO();
+    Setup_ePWM();
 
     EALLOW;
     PieVectTable.TIMER0_INT = &isr_cpu_timer0;
